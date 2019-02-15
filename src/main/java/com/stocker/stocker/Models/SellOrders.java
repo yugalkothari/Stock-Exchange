@@ -34,7 +34,7 @@ public class SellOrders {
 
     private Float price;
 
-    private Boolean processed;
+    private int processed;
 
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -94,11 +94,11 @@ public class SellOrders {
         this.price = price;
     }
 
-    public Boolean getProcessed() {
+    public int getProcessed() {
         return processed;
     }
 
-    public void setProcessed(Boolean processed) {
+    public void setProcessed(int processed) {
         this.processed = processed;
     }
 
