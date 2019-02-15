@@ -21,13 +21,10 @@ public class BuyOrders {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotBlank
     private Long transaction_id;
 
-    @NotBlank
     private String stock;
 
-    @NotBlank
     private Time time;
 
     private Long quantity;

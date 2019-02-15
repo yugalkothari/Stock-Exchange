@@ -20,17 +20,14 @@ public class Transactions {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotBlank
     private Long sell_transaction_id;
 
-    @NotBlank
     private String stock;
 
     private Long quantity;
 
     private Float price;
 
-    @NotBlank
     private Long buy_transaction_id;
 
     @Column(nullable = false, updatable = false)
