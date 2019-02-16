@@ -31,9 +31,9 @@ public class OrderProcessorImpl implements Serializable {
                for (int i=0;i<UnProcessedBuys.size();i++){
                    com.stocker.stocker.Models.SellOrders  UnProcessedSells = sellOrders.findAllUnProcessedSells(UnProcessedBuys.get(i).getStock(), UnProcessedBuys.get(i).getTime(), UnProcessedBuys.get(i).getPrice());
                    if(UnProcessedBuys.get(i).getContinued()==1){
-                       UnProcessedSells = sellOrders.findAllUnProcessedSellse(UnProcessedBuys.get(i).getStock(), UnProcessedBuys.get(i).getTime(), UnProcessedBuys.get(i).getPrice());
+                       UnProcessedSells = sellOrders.findAllUnProcessedSellse(UnProcessedBuys.get(i).getStock(),UnProcessedBuys.get(i).getPrice());
                     }
-                   if(UnProcessedSells!=null && UnProcessedBuys.get(i).getContinued()!=1){
+                   if(UnProcessedSells!=null){
                        if(UnProcessedBuys.get(i).getQuantity()==UnProcessedSells.getQuantity()){
                            com.stocker.stocker.Models.Transactions transactions=new com.stocker.stocker.Models.Transactions();
                            transactions.setSell_transaction_id(UnProcessedSells.getTransaction_id());

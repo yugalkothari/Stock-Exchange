@@ -32,6 +32,14 @@ public class Controller implements Serializable {
     public ResponseEntity<List<Transactions>> getAllTransactions() {
         return new ResponseEntity<List<Transactions>>(transaction.findAll(), HttpStatus.OK);
     }
+    @GetMapping("/buys")
+    public ResponseEntity<List<com.stocker.stocker.Models.BuyOrders>> getAllBuys() {
+        return new ResponseEntity<List<com.stocker.stocker.Models.BuyOrders>>(buyOrders.findAll(), HttpStatus.OK);
+    }
+    @GetMapping("/sells")
+    public ResponseEntity<List<com.stocker.stocker.Models.SellOrders>> getAllSells() {
+        return new ResponseEntity<List<com.stocker.stocker.Models.SellOrders>>(sellOrders.findAll(), HttpStatus.OK);
+    }
 
     @PostMapping("/addorder")
     public void addTransactions(@RequestParam(value = "type",required = true) String type,@RequestParam(value = "price",required = true) Float price,@RequestParam(value = "quantity",required = true) Long quantity,@RequestParam(value = "transactionid",required = true) Long transactionid,@RequestParam(value = "stock",required = true) String stock,@RequestParam(value = "time",required = true) Time time) {
