@@ -24,59 +24,69 @@ public class OrderProcessorImpl implements Serializable {
     @Autowired
     Transactions transaction;
 
-    @Scheduled(fixedDelay = 1000, initialDelay = 1000)
+    @Scheduled(fixedDelay = 5000, initialDelay = 1000)
     public void Processor() {
-        System.out.println("IN Service ");
-        List < com.stocker.stocker.Models.BuyOrders > UnProcessedBuys = buyOrders.findAllUnProcessedBuys();
-        for (int i = 0; i < UnProcessedBuys.size(); i++) {
-            List < com.stocker.stocker.Models.SellOrders > UnProcessedSells = sellOrders.findAllUnProcessedSells(UnProcessedBuys.get(i).getStock(), UnProcessedBuys.get(i).getTime(), UnProcessedBuys.get(i).getPrice());
-            for (int j = 0; j < UnProcessedSells.size(); j++) {
+        System.out.println("Iterating Again");
+                List <com.stocker.stocker.Models.BuyOrders> UnProcessedBuys = buyOrders.findAllUnProcessedBuys();
+               for (int i=0;i<UnProcessedBuys.size();i++){
+                   com.stocker.stocker.Models.SellOrders  UnProcessedSells = sellOrders.findAllUnProcessedSells(UnProcessedBuys.get(i).getStock(), UnProcessedBuys.get(i).getTime(), UnProcessedBuys.get(i).getPrice());
+                   if(UnProcessedSells!=null){
 
-                    System.out.println("sell: " + UnProcessedSells.get(j).getPrice());
-                    System.out.println("buy: " + UnProcessedBuys.get(i).getPrice());
+                       if(UnProcessedBuys.get(i).getQuantity()==UnProcessedSells.getQuantity()){
+                           com.stocker.stocker.Models.Transactions transactions=new com.stocker.stocker.Models.Transactions();
+                           transactions.setSell_transaction_id(UnProcessedSells.getTransaction_id());
+                           transactions.setBuy_transaction_id(UnProcessedBuys.get(i).getTransaction_id());
+                           transactions.setQuantity(UnProcessedSells.getQuantity());
+                           transactions.setPrice(UnProcessedSells.getPrice());
+                           transactions.setStock(UnProcessedSells.getStock());
+                           transaction.save(transactions);
 
-                    if (UnProcessedBuys.get(i).getQuantity() == UnProcessedSells.get(j).getQuantity()) {
-                        UnProcessedBuys.get(i).setProcessed(1);
-                        UnProcessedSells.get(j).setProcessed(1);
-                        buyOrders.save(UnProcessedBuys.get(i));
-                        sellOrders.save(UnProcessedSells.get(j));
-                        com.stocker.stocker.Models.Transactions transactions = new com.stocker.stocker.Models.Transactions();
-                        transactions.setBuy_transaction_id(UnProcessedBuys.get(i).getTransaction_id());
-                        transactions.setSell_transaction_id(UnProcessedSells.get(j).getTransaction_id());
-                        transactions.setPrice(UnProcessedSells.get(j).getPrice());
-                        transactions.setStock(UnProcessedBuys.get(i).getStock());
-                        transactions.setQuantity(UnProcessedSells.get(j).getQuantity());
-                        transaction.save(transactions);
+                           UnProcessedBuys.get(i).setProcessed(1);
+                           buyOrders.save(UnProcessedBuys.get(i));
+                           UnProcessedSells.setProcessed(1);
+                           sellOrders.save(UnProcessedSells);
 
-                    } else if ((UnProcessedBuys.get(i).getQuantity() < UnProcessedSells.get(j).getQuantity())) {
-                             UnProcessedBuys.get(i).setProcessed(1);
-                             buyOrders.save(UnProcessedBuys.get(i));
-                             UnProcessedSells.get(j).setQuantity(UnProcessedSells.get(j).getQuantity()-UnProcessedBuys.get(i).getQuantity());
-                             sellOrders.save(UnProcessedSells.get(j));
-                        com.stocker.stocker.Models.Transactions transactions = new com.stocker.stocker.Models.Transactions();
-                        transactions.setBuy_transaction_id(UnProcessedBuys.get(i).getTransaction_id());
-                        transactions.setSell_transaction_id(UnProcessedSells.get(j).getTransaction_id());
-                        transactions.setPrice(UnProcessedSells.get(j).getPrice());
-                        transactions.setStock(UnProcessedBuys.get(i).getStock());
-                        transactions.setQuantity(UnProcessedSells.get(j).getQuantity());
-                        transaction.save(transactions);
-                    } else {
-                        UnProcessedSells.get(j).setProcessed(1);
-                        sellOrders.save(UnProcessedSells.get(j));
-                        UnProcessedBuys.get(i).setQuantity(UnProcessedBuys.get(i).getQuantity()-UnProcessedSells.get(j).getQuantity());
-                        buyOrders.save(UnProcessedBuys.get(i));
-                        com.stocker.stocker.Models.Transactions transactions = new com.stocker.stocker.Models.Transactions();
-                        transactions.setBuy_transaction_id(UnProcessedBuys.get(i).getTransaction_id());
-                        transactions.setSell_transaction_id(UnProcessedSells.get(j).getTransaction_id());
-                        transactions.setPrice(UnProcessedSells.get(j).getPrice());
-                        transactions.setStock(UnProcessedBuys.get(i).getStock());
-                        transactions.setQuantity(UnProcessedSells.get(j).getQuantity());
-                        transaction.save(transactions);
-                    }
+                       }else if(UnProcessedBuys.get(i).getQuantity() < UnProcessedSells.getQuantity()){
+                           com.stocker.stocker.Models.Transactions transactions=new com.stocker.stocker.Models.Transactions();
+                           transactions.setSell_transaction_id(UnProcessedSells.getTransaction_id());
+                           transactions.setBuy_transaction_id(UnProcessedBuys.get(i).getTransaction_id());
+                           transactions.setQuantity(UnProcessedBuys.get(i).getQuantity());
+                           transactions.setPrice(UnProcessedSells.getPrice());
+                           transactions.setStock(UnProcessedSells.getStock());
+                           transaction.save(transactions);
+
+                           UnProcessedBuys.get(i).setProcessed(1);
+                           buyOrders.save(UnProcessedBuys.get(i));
+
+                           UnProcessedSells.setQuantity(UnProcessedSells.getQuantity()-UnProcessedBuys.get(i).getQuantity());
+                           sellOrders.save(UnProcessedSells);
+
+                       }else{
+                           com.stocker.stocker.Models.Transactions transactions=new com.stocker.stocker.Models.Transactions();
+                           transactions.setSell_transaction_id(UnProcessedSells.getTransaction_id());
+                           transactions.setBuy_transaction_id(UnProcessedBuys.get(i).getTransaction_id());
+                           transactions.setQuantity(UnProcessedSells.getQuantity());
+                           transactions.setPrice(UnProcessedSells.getPrice());
+                           transactions.setStock(UnProcessedSells.getStock());
+                           transaction.save(transactions);
+
+                           UnProcessedSells.setProcessed(1);
+                           sellOrders.save(UnProcessedSells);
+
+                           UnProcessedBuys.get(i).setQuantity(UnProcessedBuys.get(i).getQuantity()-UnProcessedSells.getQuantity());
+                           buyOrders.save(UnProcessedBuys.get(i));
+                       }
+
+                   }else{
+                       System.out.println("continued");
+                       continue;
+                   }
+
+               }
 
 
-            }
-        }
+
+
 
 
     }
