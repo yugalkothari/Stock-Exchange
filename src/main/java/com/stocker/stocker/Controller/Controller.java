@@ -34,8 +34,27 @@ public class Controller implements Serializable {
     }
 
     @PostMapping("/addorder")
-    public void addTransactions(@RequestParam(value = "type",required = true) String type,@RequestParam(value = "price",required = true) Float price,@RequestParam(value = "quantity",required = true) Long quantity,@RequestParam(value = "transactionid",required = true) Long transactionid,@RequestParam(value = "stock",required = true) String stock,@RequestParam(value = "processed",required = true) int processed,@RequestParam(value = "time",required = true) Time time) {
-
+    public void addTransactions(@RequestParam(value = "type",required = true) String type,@RequestParam(value = "price",required = true) Float price,@RequestParam(value = "quantity",required = true) Long quantity,@RequestParam(value = "transactionid",required = true) Long transactionid,@RequestParam(value = "stock",required = true) String stock,@RequestParam(value = "time",required = true) Time time) {
+     if(type=="buy"){
+         com.stocker.stocker.Models.BuyOrders buyOrder = new com.stocker.stocker.Models.BuyOrders();
+         buyOrder.setProcessed(0);
+         buyOrder.setQuantity(quantity);
+         buyOrder.setPrice(price);
+         buyOrder.setStock(stock);
+         buyOrder.setTime(time);
+         buyOrder.setTransaction_id(transactionid);
+         buyOrders.save(buyOrder);
+     }
+     else{
+         com.stocker.stocker.Models.SellOrders sellOrder = new com.stocker.stocker.Models.SellOrders();
+         sellOrder.setQuantity(quantity);
+         sellOrder.setProcessed(0);
+         sellOrder.setPrice(price);
+         sellOrder.setStock(stock);
+         sellOrder.setTime(time);
+         sellOrder.setTransaction_id(transactionid);
+         sellOrders.save(sellOrder);
+        }
 
     }
 

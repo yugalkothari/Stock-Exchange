@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Stocker</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <h2>Transactions</h2>
+  <table class="table">
+    <thead>
+      <tr>
+       <th>Sell-id</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Buy-id</th>
+      </tr>
+    </thead>
+    <tbody id="transactions">
+    </tbody>
+  </table>
+</div>
+
+<div class="container">
+  <h2>Add Order</h2>
+  <form action="javascript:addOrder();">
+    
+    <div class="form-group">
+      <label for="email">Stock:</label>
+      <input  class="form-control" id="stock" value="TCS">
+    </div>
+
+    <div class="form-group">
+      <label for="email">Time:</label>
+      <input  class="form-control" id="time" value="09:50:00">
+    </div>
+    <div class="form-group">
+      <label for="email">Quantity:</label>
+      <input  class="form-control" id="quantity" value="50">
+    </div>
+    <div class="form-group">
+      <label for="email">Transaction-id:</label>
+      <input  class="form-control" id="id" value="99">
+    </div>
+    <div class="form-group">
+      <label for="email">Price:</label>
+      <input  class="form-control" id="price" value="240">
+    </div>
+    <div class="form-group">
+      <label for="email">Type:</label>
+     <select class="form-control" id="type">
+        <option value="sell">sell</option>
+        <option value="buy">buy</option>
+      </select></div>
+   
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+
+<script type="text/javascript">
+  var settings = {
+  "async": true,
+  "crossDomain": true,
+  "url": "http://localhost:8080/api/transactions",
+  "method": "GET"
+}
+
+$.ajax(settings).done(function (response) {
+  console.log(response);
+
+for (var i=0;i<response.length;i++){
+
+var newRowContent = "<tr><td>"+response[i].sell_transaction_id+"</td><td>"+response[i].quantity+"</td><td>"+response[i].price+"</td><td>"+response[i].buy_transaction_id+"</td></tr>"
+$("#transactions").append(newRowContent); 
+
+}
+});
+
+function addOrder(){
+
+
+var form = new FormData();
+form.append("type", $("#type").val());
+form.append("stock", $("#stock").val());
+form.append("time", $("#time").val());
+form.append("quantity", $("#quantity").val());
+form.append("transactionid", $("#id").val());
+form.append("price", $("#price").val());
+
+var settings = {
+  "async": true,
+  "crossDomain": true,
+  "url": "http://localhost:8080/api/addorder",
+  "method": "POST",
+  "processData": false,
+  "contentType": false,
+  "mimeType": "multipart/form-data",
+  "data": form
+}
+
+$.ajax(settings).done(function (response) {
+  console.log(response);
+});
+
+}
+</script>
+</body>
+</html>
