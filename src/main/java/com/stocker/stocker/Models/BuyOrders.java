@@ -33,6 +33,10 @@ public class BuyOrders {
 
     private int processed;
 
+    private int continued;
+
+
+
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate
@@ -42,6 +46,14 @@ public class BuyOrders {
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
     private Date updated_at;
+
+    public int getContinued() {
+        return continued;
+    }
+
+    public void setContinued(int continued) {
+        this.continued = continued;
+    }
 
     public Long getId() {
         return id;

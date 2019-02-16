@@ -30,8 +30,10 @@ public class OrderProcessorImpl implements Serializable {
                 List <com.stocker.stocker.Models.BuyOrders> UnProcessedBuys = buyOrders.findAllUnProcessedBuys();
                for (int i=0;i<UnProcessedBuys.size();i++){
                    com.stocker.stocker.Models.SellOrders  UnProcessedSells = sellOrders.findAllUnProcessedSells(UnProcessedBuys.get(i).getStock(), UnProcessedBuys.get(i).getTime(), UnProcessedBuys.get(i).getPrice());
-                   if(UnProcessedSells!=null){
-
+                   if(UnProcessedBuys.get(i).getContinued()==1){
+                       UnProcessedSells = sellOrders.findAllUnProcessedSellse(UnProcessedBuys.get(i).getStock(), UnProcessedBuys.get(i).getTime(), UnProcessedBuys.get(i).getPrice());
+                    }
+                   if(UnProcessedSells!=null && UnProcessedBuys.get(i).getContinued()!=1){
                        if(UnProcessedBuys.get(i).getQuantity()==UnProcessedSells.getQuantity()){
                            com.stocker.stocker.Models.Transactions transactions=new com.stocker.stocker.Models.Transactions();
                            transactions.setSell_transaction_id(UnProcessedSells.getTransaction_id());
@@ -40,12 +42,10 @@ public class OrderProcessorImpl implements Serializable {
                            transactions.setPrice(UnProcessedSells.getPrice());
                            transactions.setStock(UnProcessedSells.getStock());
                            transaction.save(transactions);
-
                            UnProcessedBuys.get(i).setProcessed(1);
                            buyOrders.save(UnProcessedBuys.get(i));
                            UnProcessedSells.setProcessed(1);
                            sellOrders.save(UnProcessedSells);
-
                        }else if(UnProcessedBuys.get(i).getQuantity() < UnProcessedSells.getQuantity()){
                            com.stocker.stocker.Models.Transactions transactions=new com.stocker.stocker.Models.Transactions();
                            transactions.setSell_transaction_id(UnProcessedSells.getTransaction_id());
@@ -54,13 +54,10 @@ public class OrderProcessorImpl implements Serializable {
                            transactions.setPrice(UnProcessedSells.getPrice());
                            transactions.setStock(UnProcessedSells.getStock());
                            transaction.save(transactions);
-
                            UnProcessedBuys.get(i).setProcessed(1);
                            buyOrders.save(UnProcessedBuys.get(i));
-
                            UnProcessedSells.setQuantity(UnProcessedSells.getQuantity()-UnProcessedBuys.get(i).getQuantity());
                            sellOrders.save(UnProcessedSells);
-
                        }else{
                            com.stocker.stocker.Models.Transactions transactions=new com.stocker.stocker.Models.Transactions();
                            transactions.setSell_transaction_id(UnProcessedSells.getTransaction_id());
@@ -69,17 +66,16 @@ public class OrderProcessorImpl implements Serializable {
                            transactions.setPrice(UnProcessedSells.getPrice());
                            transactions.setStock(UnProcessedSells.getStock());
                            transaction.save(transactions);
-
                            UnProcessedSells.setProcessed(1);
                            sellOrders.save(UnProcessedSells);
-
                            UnProcessedBuys.get(i).setQuantity(UnProcessedBuys.get(i).getQuantity()-UnProcessedSells.getQuantity());
                            buyOrders.save(UnProcessedBuys.get(i));
                        }
 
                    }else{
-                       System.out.println("continued");
-                       continue;
+                      UnProcessedBuys.get(i).setContinued(1);
+                      buyOrders.save(UnProcessedBuys.get(i));
+                      continue;
                    }
 
                }
