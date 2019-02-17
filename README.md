@@ -18,6 +18,10 @@ sell transaction which matches the buy transaction and update the transaction ta
 
 It contains a client application as well in the client folder which can be used.
 
+![alt text](https://github.com/yugalkothari/Stock-Exchange/blob/master/client/stocker.png)
+
+![alt text](https://github.com/yugalkothari/Stock-Exchange/blob/master/client/stocker2.png)
 
 
    
+
